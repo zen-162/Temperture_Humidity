@@ -1,5 +1,3 @@
-#import pandas as pd
-#import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -10,7 +8,9 @@ import os
 #from matplotlib.dates import date2num
 import matplotlib.ticker as ticker
 
-csv_file_name = '/home/zen/Documents/Geek/Test_TemperatureHumidity/test_temp_humi.csv'
+csv_file_name_1 = '/home/zen/Documents/Geek/Test_TemperatureHumidity/test_data1.csv'
+csv_file_name_2 = '/home/zen/Documents/Geek/Test_TemperatureHumidity/test_data2.csv'
+
 image_file_path = '/home/zen/Documents/Geek/Test_TemperatureHumidity/data_image'
 image_file_name = ['temperature.png', 'humidity.png', 'absolute_humidity.png']
 
@@ -21,7 +21,7 @@ graph_num = 3 # 気温, 湿度, 絶対湿度, 気象庁
 #plt.rcParams['font.family'] = 'IPAexGothic'
 
 # csv読み取りグラフように値を変換
-def create_data():
+def create_data(file_name):
     newline_num = 0 # 改行の数
     rows = []
     data = []
@@ -32,7 +32,7 @@ def create_data():
     start_day = ''
     end_day = ''
 
-    with open(csv_file_name) as f:
+    with open(file_name) as f:
         reader = csv.reader(f)
         rows = [row for row in reader]
 
@@ -82,7 +82,9 @@ def create_data():
 
 # グラフを作成
 def create_graph():
-    x_data, y_data, title, start_day, end_day = create_data()
+    #x_data, y_data, title, start_day, end_day = create_data()
+    x_data_1, y_data_1, title_1, start_day_1, end_day_1 = create_data(csv_file_name_1)
+    x_data_2, y_data_2, title_2, start_day_2, end_day_2 = create_data(csv_file_name_2) # 単純に繰り返してるが他方法試す
 
     fig = plt.figure(dpi=170)
     for j in range(graph_num):
@@ -94,15 +96,17 @@ def create_graph():
         # ax.set_major_formatter(DateFormatter('%H:%M'))
         #ax.tick_params(axis='x', rotation=270)
 
-        graph_data = np.asfarray(y_data[num+1], dtype=float) #気温:2, 湿度:3, 絶対湿度:4
+        graph_data1 = np.asfarray(y_data_1[num+1], dtype=float) #気温:2, 湿度:3, 絶対湿度:4
+        graph_data2 = np.asfarray(y_data_2[num+1], dtype=float) #気温:2, 湿度:3, 絶対湿度:4
         #plt.xlabel(title[1])
         plt.xlabel('hour:minute')
         plt.xticks(rotation=270, fontsize=7)
-        plt.ylabel(title[num+1])
-        plt.plot(x_data, graph_data, label=title[num+1], linestyle='solid', marker='o')
+        plt.ylabel(title_1[num+1])
+        plt.plot(x_data_1, graph_data1, label='new_geek', linestyle='solid', marker='o')
+        plt.plot(graph_data2, label='old_geek', linestyle='solid', marker='o')
 
         plt.ylim([min(plt.ylim())-0.5, max(plt.ylim())+0.5])
-        plt.title(f'{start_day}~{end_day} {title[num+1]}')
+        plt.title(f'{start_day_1}~{end_day_1} {title_1[num+1]}')
         plt.legend(loc='upper right')
         plt.minorticks_on()
 
